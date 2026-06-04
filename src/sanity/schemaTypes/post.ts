@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { ExifAutoFetcher } from '../components/ExifAutoFetcher';
 
 export const post = defineType({
     name: 'post',

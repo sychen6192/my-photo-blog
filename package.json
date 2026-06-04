@@ -15,18 +15,24 @@
   "dependencies": {
     "@astrojs/cloudflare": "^13.6.1",
     "@astrojs/react": "^5.0.7",
+    "@portabletext/react": "^6.2.0",
     "@sanity/astro": "^3.4.0",
     "@sanity/client": "^7.22.1",
+    "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.4.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-is": "^19.2.7",
     "sanity": "^5.30.0",
     "styled-components": "^6.4.2",
+    "tailwindcss": "^4.3.0",
     "ts-node": "^10.9.2",
     "wrangler": "^4.97.0"
   },
   "overrides": {
     "vite": "^7"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19"
   }
 }

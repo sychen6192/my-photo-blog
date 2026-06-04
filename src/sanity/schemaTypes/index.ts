@@ -1,3 +1,4 @@
 import { post } from './post';
+import { album } from './album';
 
-export const schemaTypes = [post];
+export const schemaTypes = [album, post];

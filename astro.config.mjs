@@ -5,7 +5,7 @@ import sanity from '@sanity/astro';
 import react from '@astrojs/react';
 
 export default defineConfig({
-  output: 'server',
+  output: 'static',
   adapter: cloudflare(),
   integrations: [
     react(),

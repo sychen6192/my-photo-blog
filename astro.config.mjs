@@ -1,5 +1,17 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
+import sanity from '@sanity/astro';
 
-// https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+  output: 'static', 
+  adapter: cloudflare(),
+  integrations: [
+    sanity({
+      projectId: '8zsgrbmy',
+      dataset: 'production',
+      useCdn: false, 
+      studioBasePath: '/admin', 
+    })
+  ]
+});

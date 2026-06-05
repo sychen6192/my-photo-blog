@@ -16,7 +16,7 @@ export const post = defineType({
             description: '這張作品屬於哪一次旅程',
             validation: Rule => Rule.required(),
         }),
-        defineField({ name: 'coverImage', title: 'R2 圖片完整檔名', type: 'string', description: '例如：DSCF4825.JPG', validation: Rule => Rule.required() }),
+        defineField({ name: 'coverImage', title: 'R2 圖片完整檔名', type: 'string', description: '例如：DSCF4825.JPG', validation: Rule => Rule.required(), components: { input: ExifAutoFetcher } }),
         defineField({ name: 'content', title: '文章內文', type: 'array', of: [{ type: 'block' }] }),
         defineField({ name: 'camera', title: '使用相機', type: 'string', initialValue: 'Fujifilm X-T50' }),
         defineField({ name: 'lens', title: '使用鏡頭', type: 'string', initialValue: 'XF 16-55mm f/2.8 R LM WR II' }),

@@ -7,7 +7,7 @@ interface Album {
   _id: string;
   title: string;
   slug: { current: string };
-  coverImage: string;
+  coverImage: string | null;
   photoCount: number;
 }
 
@@ -46,15 +46,17 @@ const albums: Album[] = await sanityClient.fetch(`
             class="group relative block overflow-hidden bg-neutral-900"
           >
             <div class="aspect-[3/2] overflow-hidden">
-              <img
-                src={imgUrl(album.coverImage, 800)}
-                srcset={`${imgUrl(album.coverImage, 400)} 400w, ${imgUrl(album.coverImage, 800)} 800w, ${imgUrl(album.coverImage, 1200)} 1200w`}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                alt={album.title}
-                loading="lazy"
-                decoding="async"
-                class="h-full w-full object-cover brightness-90 transition duration-500 group-hover:scale-[1.03] group-hover:brightness-100"
-              />
+              {album.coverImage && (
+                <img
+                  src={imgUrl(album.coverImage, 800)}
+                  srcset={`${imgUrl(album.coverImage, 400)} 400w, ${imgUrl(album.coverImage, 800)} 800w, ${imgUrl(album.coverImage, 1200)} 1200w`}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  alt={album.title}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-full w-full object-cover brightness-90 transition duration-500 group-hover:scale-[1.03] group-hover:brightness-100"
+                />
+              )}
             </div>
             <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5 pt-12">
               <h2 class="text-base font-medium text-white">{album.title}</h2>

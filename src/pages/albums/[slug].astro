@@ -38,7 +38,7 @@ const album: Album = await sanityClient.fetch(
     title,
     slug,
     description,
-    "photos": photos[]{ filename, title, camera, lens, exif }
+    "photos": coalesce(photos[]{ filename, title, camera, lens, exif }, [])
   }`,
   { slug }
 );

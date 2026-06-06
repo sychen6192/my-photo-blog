@@ -38,4 +38,10 @@ const {
   html {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
+  /* 行動端:關掉按鈕/連結的雙擊放大與點擊灰底高亮(保留雙指 pinch 縮放) */
+  button,
+  a {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
 </style>

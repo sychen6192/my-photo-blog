@@ -1,0 +1,9 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "types": ["@cloudflare/workers-types"],
+    "lib": ["ES2022"],
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "../src/sanity/lib/exif.ts"]
+}

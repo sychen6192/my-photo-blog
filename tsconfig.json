@@ -10,6 +10,7 @@
     "./worker-configuration.d.ts"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "importer"
   ]
 }

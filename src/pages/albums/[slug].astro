@@ -108,9 +108,13 @@ if (!album) {
         ))}
       </div>
     )}
-    <script type="application/json" id="lightbox-data" is:inline set:html={JSON.stringify(
-      album.photos.map((p) => ({ filename: p.filename, title: p.title ?? '', exif: p.exif ?? '', lens: p.lens ?? '' }))
-    )} />
-    <Lightbox />
+    {album.photos.length > 0 && (
+      <Fragment>
+        <script type="application/json" id="lightbox-data" is:inline set:html={JSON.stringify(
+          album.photos.map((p) => ({ filename: p.filename, title: p.title ?? '', exif: p.exif ?? '', lens: p.lens ?? '' }))
+        ).replace(/<\/script>/gi, '<\\/script>')} />
+        <Lightbox />
+      </Fragment>
+    )}
   </main>
 </Layout>

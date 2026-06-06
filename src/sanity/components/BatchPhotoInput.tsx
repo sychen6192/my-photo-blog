@@ -51,26 +51,29 @@ export function BatchPhotoInput(props: ArrayOfObjectsInputProps) {
     setBusy(true);
     setLog([`開始匯入 ${filenames.length} 張…`]);
 
-    const newItems: Record<string, unknown>[] = [];
-    for (const filename of filenames) {
-      try {
-        const fields = await fetchExifFields(filename);
-        const item: Record<string, unknown> = { _key: crypto.randomUUID(), _type: 'photo', filename };
-        if (fields.camera) item.camera = fields.camera;
-        if (fields.lens) item.lens = fields.lens;
-        if (fields.exif) item.exif = fields.exif;
-        newItems.push(item);
-        setLog((l) => [...l, `✅ ${filename}`]);
-      } catch (err) {
-        setLog((l) => [...l, `❌ ${filename} — ${err instanceof Error ? err.message : '抓取失敗'}`]);
+    try {
+      const newItems: Record<string, unknown>[] = [];
+      for (const filename of filenames) {
+        try {
+          const fields = await fetchExifFields(filename);
+          const item: Record<string, unknown> = { _key: crypto.randomUUID(), _type: 'photo', filename };
+          if (fields.camera) item.camera = fields.camera;
+          if (fields.lens) item.lens = fields.lens;
+          if (fields.exif) item.exif = fields.exif;
+          newItems.push(item);
+          setLog((l) => [...l, `✅ ${filename}`]);
+        } catch (err) {
+          setLog((l) => [...l, `❌ ${filename} — ${err instanceof Error ? err.message : '抓取失敗'}`]);
+        }
       }
-    }
 
-    if (newItems.length > 0) {
-      onChange([setIfMissing([]), insert(newItems, 'after', [-1])]);
+      if (newItems.length > 0) {
+        onChange([setIfMissing([]), insert(newItems, 'after', [-1])]);
+      }
+      setLog((l) => [...l, `完成:成功 ${newItems.length} / ${filenames.length}`]);
+    } finally {
+      setBusy(false);
     }
-    setLog((l) => [...l, `完成:成功 ${newItems.length} / ${filenames.length}`]);
-    setBusy(false);
   }, [mode, prefix, start, end, ext, listText, onChange]);
 
   return (

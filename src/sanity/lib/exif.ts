@@ -56,11 +56,24 @@ export function formatExif(exif: Record<string, any> | null | undefined): ExifFi
 }
 
 /**
+ * 組出 R2 上某個檔名的完整網址。逐段編碼以保留資料夾分隔的斜線
+ * (例如 'tottori/DSCF4825.JPG' → '.../tottori/DSCF4825.JPG'),
+ * 同時安全處理空白等字元。
+ */
+export function r2Url(filename: string): string {
+  const encodedPath = filename
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+  return `${R2_BASE}/${encodedPath}`;
+}
+
+/**
  * 從 R2 抓某個檔名的 EXIF 並格式化。exifr 接受 URL,會以分段(range)讀取檔頭,
  * 不會下載整張原圖。需 R2 公開讀取 + CORS 允許 Studio 網域。
  */
 export async function fetchExifFields(filename: string): Promise<ExifFields> {
-  const url = `${R2_BASE}/${encodeURIComponent(filename)}`;
+  const url = r2Url(filename);
   const exif = await exifr.parse(url, {
     tiff: true,
     exif: true,

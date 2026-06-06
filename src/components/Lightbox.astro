@@ -1,0 +1,72 @@
+---
+// 原生 <dialog> 燈箱。照片資料由相簿頁輸出的 #lightbox-data JSON script 提供。
+---
+<dialog
+  id="lightbox"
+  class="m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0 text-neutral-100 backdrop:bg-black/85"
+>
+  <div id="lb-stage" class="flex h-full w-full items-center justify-center p-4 sm:p-10">
+    <button id="lb-close" type="button" aria-label="關閉"
+      class="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/10 text-xl text-white transition hover:bg-white/20">✕</button>
+    <button id="lb-prev" type="button" aria-label="上一張"
+      class="absolute left-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/20 sm:left-6">‹</button>
+    <button id="lb-next" type="button" aria-label="下一張"
+      class="absolute right-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/20 sm:right-6">›</button>
+    <figure id="lb-figure" class="m-0 flex max-h-full flex-col items-center">
+      <img id="lb-img" alt="" class="max-h-[82vh] max-w-full rounded object-contain" />
+      <figcaption class="mt-3 text-center">
+        <p id="lb-title" class="text-sm text-neutral-100"></p>
+        <p id="lb-exif" class="mt-1 text-xs tracking-wide text-neutral-400"></p>
+      </figcaption>
+    </figure>
+  </div>
+</dialog>
+
+<script>
+  import { imgUrl } from '../lib/image';
+  import { wrapIndex } from '../lib/lightbox';
+
+  interface LbPhoto { filename: string; title: string; exif: string; lens: string }
+
+  const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
+  const dataEl = document.getElementById('lightbox-data');
+  if (dialog && dataEl) {
+    const photos: LbPhoto[] = JSON.parse(dataEl.textContent || '[]');
+    const imgEl = document.getElementById('lb-img') as HTMLImageElement;
+    const titleEl = document.getElementById('lb-title') as HTMLElement;
+    const exifEl = document.getElementById('lb-exif') as HTMLElement;
+    const stage = document.getElementById('lb-stage') as HTMLElement;
+    const figure = document.getElementById('lb-figure') as HTMLElement;
+    let current = 0;
+
+    const render = () => {
+      const p = photos[current];
+      if (!p) return;
+      imgEl.src = imgUrl(p.filename, 1600);
+      imgEl.alt = p.title;
+      titleEl.textContent = p.title;
+      exifEl.textContent = [p.exif, p.lens].filter(Boolean).join('  ·  ');
+    };
+    const open = (i: number) => {
+      current = wrapIndex(i, photos.length);
+      render();
+      if (!dialog.open) dialog.showModal();
+      document.body.style.overflow = 'hidden';
+    };
+    const step = (d: number) => { current = wrapIndex(current + d, photos.length); render(); };
+
+    document.querySelectorAll<HTMLElement>('[data-lightbox-index]').forEach((el) => {
+      el.addEventListener('click', () => open(Number(el.dataset.lightboxIndex)));
+    });
+    document.getElementById('lb-close')!.addEventListener('click', () => dialog.close());
+    document.getElementById('lb-prev')!.addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
+    document.getElementById('lb-next')!.addEventListener('click', (e) => { e.stopPropagation(); step(1); });
+    figure.addEventListener('click', (e) => e.stopPropagation());
+    stage.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') step(-1);
+      else if (e.key === 'ArrowRight') step(1);
+    });
+    dialog.addEventListener('close', () => { document.body.style.overflow = ''; });
+  }
+</script>

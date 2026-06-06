@@ -39,11 +39,11 @@ const albums: Album[] = await sanityClient.fetch(`
         </p>
       </div>
     ) : (
-      <div class="grid grid-cols-1 gap-px px-px sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-3.5 p-3.5 sm:grid-cols-2 lg:grid-cols-3">
         {albums.map((album) => (
           <a
             href={`/albums/${album.slug.current}`}
-            class="group relative block overflow-hidden bg-neutral-900"
+            class="group relative block overflow-hidden rounded-md bg-neutral-900"
           >
             <div class="aspect-[3/2] overflow-hidden">
               {album.coverImage && (
@@ -54,7 +54,7 @@ const albums: Album[] = await sanityClient.fetch(`
                   alt={album.title}
                   loading="lazy"
                   decoding="async"
-                  class="h-full w-full object-cover brightness-90 transition duration-500 group-hover:scale-[1.03] group-hover:brightness-100"
+                  class="h-full w-full object-cover contrast-[1.05] saturate-[.92] transition duration-500 group-hover:scale-[1.03]"
                 />
               )}
             </div>

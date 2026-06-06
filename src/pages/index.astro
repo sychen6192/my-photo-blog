@@ -8,7 +8,7 @@ interface Album {
   title: string;
   slug: { current: string };
   coverImage: string;
-  postCount: number;
+  photoCount: number;
 }
 
 const albums: Album[] = await sanityClient.fetch(`
@@ -16,8 +16,8 @@ const albums: Album[] = await sanityClient.fetch(`
     _id,
     title,
     slug,
-    coverImage,
-    "postCount": count(*[_type == "post" && references(^._id)])
+    "coverImage": coalesce(coverImage, photos[0].filename),
+    "photoCount": count(photos)
   }
 `);
 ---
@@ -59,7 +59,7 @@ const albums: Album[] = await sanityClient.fetch(`
             <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5 pt-12">
               <h2 class="text-base font-medium text-white">{album.title}</h2>
               <p class="mt-0.5 text-xs tracking-wide text-neutral-400">
-                {album.postCount} {album.postCount === 1 ? 'photo' : 'photos'}
+                {album.photoCount} {album.photoCount === 1 ? 'photo' : 'photos'}
               </p>
             </div>
           </a>

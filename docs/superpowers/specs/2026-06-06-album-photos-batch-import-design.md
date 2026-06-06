@@ -1,8 +1,25 @@
 # 設計:相簿內建照片陣列 + 批次匯入
 
-日期:2026-06-06
+日期:2026-06-06(2026-06-07 修訂匯入機制)
 範圍:重新設計「新增照片」工作流程,解決三個痛點中的兩個(自動帶 EXIF、批次上傳免打 slug)。
 **不在此範圍**:網站主題/外觀調整(另開一輪設計)。
+
+## 2026-06-07 修訂:改用 Importer Worker(取代瀏覽器端連號/逐檔抓取)
+
+實作中發現兩個事實推翻了原本「瀏覽器直接抓 R2」的做法:
+
+1. **R2 自訂網域沒有 CORS 標頭**(`curl` 驗證:檔案 HTTP 200 但無 `access-control-allow-origin`),瀏覽器跨網域 `fetch` 會被擋 → 原 `fetchExifFields` 永遠抓不到。
+2. **瀏覽器無法列出 R2 資料夾內容**(列檔需憑證)。使用者真正要的是「給資料夾 prefix → 抓整個資料夾」,且實際檔名是跳號的(`4755 / 4838 / 4893`…),連號展開不適用。
+3. 原圖很大(單張約 26 MB),不適合下載到瀏覽器解析。
+
+**修訂後做法**:新增一支獨立的 Cloudflare Worker(`importer/`,綁定 R2 bucket `my-photo-blog-assets`),端點 `GET /import?prefix=<folder>/`:在伺服器端 `BUCKET.list({prefix})` 列出所有影像檔 → 對每個檔用 `BUCKET.get(key, { range })` 只讀檔頭 128KB → `parseExifBuffer()` 解析 → 回傳 `{ photos: [{filename, camera, lens, exif}] }`(帶 CORS 標頭)。
+
+- `BatchPhotoInput` 改為:輸入 importer 網址(存 localStorage)+ 資料夾 prefix → 一鍵呼叫 Worker → 把回傳的照片附加進陣列。移除連號/逐檔 UI 與瀏覽器端 `fetchExifFields`/`r2Url`。
+- `src/sanity/lib/exif.ts` 移除瀏覽器抓取(`fetchExifFields`/`r2Url`),新增 `parseExifBuffer(buffer)` 供 Worker 與既有 `formatExif` 共用。
+- 部署需一次性 `wrangler login` + `wrangler deploy --config importer/wrangler.jsonc`(使用者本就用 wrangler,不需新增 app token)。
+- 安全性:Worker 預設 CORS 回 `*`、端點公開可列舉 bucket;因 bucket 本就公開讀取,個人部落格可接受,日後可用 `ALLOWED_ORIGINS` env 收斂。
+
+下方原文中「批次匯入元件」「連號範圍」相關段落以本修訂為準。
 
 ## 背景與問題
 

@@ -1,17 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatExif, formatFocalLength, formatAperture, formatShutter, r2Url } from './exif';
-
-describe('r2Url', () => {
-  it('builds a plain URL for a root-level filename', () => {
-    expect(r2Url('DSCF4825.JPG')).toBe('https://assets.sychen6192.org/DSCF4825.JPG');
-  });
-  it('keeps folder slashes but encodes them as path segments', () => {
-    expect(r2Url('tottori/DSCF4825.JPG')).toBe('https://assets.sychen6192.org/tottori/DSCF4825.JPG');
-  });
-  it('encodes unsafe characters within a segment while preserving slashes', () => {
-    expect(r2Url('izu/my photo.jpg')).toBe('https://assets.sychen6192.org/izu/my%20photo.jpg');
-  });
-});
+import { formatExif, formatFocalLength, formatAperture, formatShutter } from './exif';
 
 describe('format helpers', () => {
   it('applies Fujifilm 1.5x crop when no 35mm value is present', () => {

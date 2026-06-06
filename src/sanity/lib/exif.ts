@@ -1,7 +1,5 @@
 import exifr from 'exifr';
 
-export const R2_BASE = 'https://assets.sychen6192.org';
-
 export interface ExifFields {
   camera?: string;
   lens?: string;
@@ -56,25 +54,12 @@ export function formatExif(exif: Record<string, any> | null | undefined): ExifFi
 }
 
 /**
- * 組出 R2 上某個檔名的完整網址。逐段編碼以保留資料夾分隔的斜線
- * (例如 'tottori/DSCF4825.JPG' → '.../tottori/DSCF4825.JPG'),
- * 同時安全處理空白等字元。
+ * 從一段影像位元組(通常是檔頭前數十 KB)解析 EXIF 並格式化。
+ * 在 Cloudflare Worker 端使用:用 R2 binding 讀取檔頭 bytes 後丟進來,
+ * 不需把整張原圖傳到瀏覽器,也沒有瀏覽器 CORS 問題。
  */
-export function r2Url(filename: string): string {
-  const encodedPath = filename
-    .split('/')
-    .map((segment) => encodeURIComponent(segment))
-    .join('/');
-  return `${R2_BASE}/${encodedPath}`;
-}
-
-/**
- * 從 R2 抓某個檔名的 EXIF 並格式化。exifr 接受 URL,會以分段(range)讀取檔頭,
- * 不會下載整張原圖。需 R2 公開讀取 + CORS 允許 Studio 網域。
- */
-export async function fetchExifFields(filename: string): Promise<ExifFields> {
-  const url = r2Url(filename);
-  const exif = await exifr.parse(url, {
+export async function parseExifBuffer(buffer: ArrayBuffer | Uint8Array): Promise<ExifFields> {
+  const exif = await exifr.parse(buffer, {
     tiff: true,
     exif: true,
     gps: false,

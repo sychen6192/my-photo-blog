@@ -61,19 +61,36 @@
     };
     const resetZoom = () => { scale = 1; tx = 0; ty = 0; imgEl.style.transform = ''; };
 
+    const showImg = () => {
+      loadingEl.classList.add('hidden');
+      imgEl.style.transition = 'opacity .25s ease';
+      imgEl.style.opacity = '1';
+    };
+    // 預先載入前後各一張,左右切換時就能即時顯示
+    const preloadNeighbors = () => {
+      if (photos.length < 2) return;
+      for (const n of [current - 1, current + 1]) {
+        const np = photos[wrapIndex(n, photos.length)];
+        if (np) { const im = new Image(); im.src = imgUrl(np.filename, 1600); }
+      }
+    };
+
     const render = () => {
       const p = photos[current];
       if (!p) return;
       imgEl.style.transition = '';
       resetZoom(); // 換照片時回到未放大狀態
-      loadingEl.classList.remove('hidden'); // 換圖時顯示讀取指示,圖載好後隱藏
-      imgEl.src = imgUrl(p.filename, 1600);
+      imgEl.style.opacity = '0'; // 立刻藏住舊圖,換圖時才不會先閃到上一張
+      loadingEl.classList.remove('hidden'); // 顯示讀取指示,新圖載好再隱藏
       imgEl.alt = p.title;
       titleEl.textContent = p.title;
       exifEl.textContent = [p.exif, p.lens].filter(Boolean).join('  ·  ');
+      imgEl.src = imgUrl(p.filename, 1600);
+      if (imgEl.complete && imgEl.naturalWidth > 0) showImg(); // 已在快取就直接顯示,不閃 spinner
+      preloadNeighbors();
     };
-    imgEl.addEventListener('load', () => loadingEl.classList.add('hidden'));
-    imgEl.addEventListener('error', () => loadingEl.classList.add('hidden'));
+    imgEl.addEventListener('load', showImg);
+    imgEl.addEventListener('error', showImg);
     const open = (i: number) => {
       current = wrapIndex(i, photos.length);
       render();

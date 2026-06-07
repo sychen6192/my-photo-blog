@@ -7,6 +7,9 @@ dist/
 # generated types
 .astro/
 
+# cloudflare wrangler 本地測試狀態/快取(不是機密,但屬於暫存,不該進 repo)
+.wrangler/
+
 # dependencies
 node_modules/
 
@@ -16,9 +19,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# environment variables
+# environment variables / 機密(含 cloudflare wrangler 的本地密鑰)
 .env
-.env.production
+.env.*
+.dev.vars
+.dev.vars.*
 
 # macOS-specific files
 .DS_Store

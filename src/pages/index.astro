@@ -22,9 +22,13 @@ const albums: Album[] = await sanityClient.fetch(`
 `);
 
 const ogCover = albums.find((a) => a.coverImage)?.coverImage ?? null;
+const lcpCover = albums[0]?.coverImage ?? null;
 ---
 
-<Layout image={ogCover ? imgUrl(ogCover, 1200) : undefined}>
+<Layout
+  image={ogCover ? imgUrl(ogCover, 1200) : undefined}
+  preloadImage={lcpCover ? imgUrl(lcpCover, 800) : undefined}
+>
   <main class="min-h-dvh pb-20">
     <header class="flex items-baseline gap-4 border-b border-neutral-800 px-6 py-8 mb-8">
       <span class="text-lg font-medium tracking-wide text-white">cloud.filmz</span>
@@ -47,7 +51,10 @@ const ogCover = albums.find((a) => a.coverImage)?.coverImage ?? null;
             href={`/albums/${album.slug.current}`}
             class="group relative block overflow-hidden rounded-md bg-neutral-900"
           >
-            <div class="aspect-[3/2] overflow-hidden">
+            <div
+              class="aspect-[3/2] overflow-hidden bg-neutral-800 bg-cover bg-center"
+              style={album.coverImage ? `background-image:url(${imgUrl(album.coverImage, 32)})` : undefined}
+            >
               {album.coverImage && (
                 <img
                   src={imgUrl(album.coverImage, 800)}
@@ -56,6 +63,7 @@ const ogCover = albums.find((a) => a.coverImage)?.coverImage ?? null;
                   alt={album.title}
                   loading="lazy"
                   decoding="async"
+                  data-fade
                   class="h-full w-full object-cover contrast-[1.05] saturate-[.92] transition duration-500 motion-safe:group-hover:scale-[1.03]"
                 />
               )}

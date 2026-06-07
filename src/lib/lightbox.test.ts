@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { wrapIndex, clamp, touchDistance, classifySwipe, clampPan } from './lightbox';
+import { wrapIndex, clamp, touchDistance, classifySwipe, clampPan, isSwipeDown } from './lightbox';
 
 describe('wrapIndex', () => {
   it('leaves in-range indices unchanged', () => {
@@ -67,6 +67,21 @@ describe('classifySwipe', () => {
   });
   it('returns 0 at exactly the threshold (must exceed it)', () => {
     expect(classifySwipe(50, 0, 50)).toBe(0);
+  });
+});
+
+describe('isSwipeDown', () => {
+  it('is true for a downward swipe past the threshold', () => {
+    expect(isSwipeDown(0, 100, 80)).toBe(true);
+  });
+  it('is false when downward travel is under the threshold', () => {
+    expect(isSwipeDown(0, 50, 80)).toBe(false);
+  });
+  it('is false for an upward swipe', () => {
+    expect(isSwipeDown(0, -100, 80)).toBe(false);
+  });
+  it('is false when the gesture is mostly horizontal', () => {
+    expect(isSwipeDown(120, 90, 80)).toBe(false);
   });
 });
 

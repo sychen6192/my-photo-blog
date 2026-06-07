@@ -28,6 +28,14 @@ export function classifySwipe(dx: number, dy: number, threshold: number): number
 }
 
 /**
+ * 是否為「向下滑」手勢(用於下滑關閉):
+ * 向下位移(dy>0)超過 threshold,且以垂直為主(dy > |dx|)。
+ */
+export function isSwipeDown(dx: number, dy: number, threshold: number): boolean {
+  return dy > threshold && dy > Math.abs(dx);
+}
+
+/**
  * 把平移量夾在縮放後可見的範圍內,避免把照片拖出畫面。
  * 以 transform-origin 置中計算:每側可移動的上限 = base * (scale - 1) / 2。
  * scale<=1(沒放大)時一律歸零置中。

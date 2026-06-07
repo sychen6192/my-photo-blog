@@ -88,7 +88,7 @@ if (!album) {
                 alt={photo.title ?? ''}
                 loading="lazy"
                 decoding="async"
-                class="h-full w-full object-cover contrast-[1.05] saturate-[.92] transition duration-500 group-hover:scale-[1.03]"
+                class="h-full w-full object-cover contrast-[1.05] saturate-[.92] transition duration-500 motion-safe:group-hover:scale-[1.03]"
               />
             </div>
             {(photo.title || photo.exif || photo.lens) && (
@@ -97,10 +97,10 @@ if (!album) {
                   <h2 class="truncate text-sm font-normal tracking-tight text-neutral-200">{photo.title}</h2>
                 )}
                 {photo.exif && (
-                  <p class="mt-1 text-[0.72rem] tracking-wide text-neutral-500">{photo.exif}</p>
+                  <p class="mt-1 text-[0.72rem] tracking-wide text-neutral-400">{photo.exif}</p>
                 )}
                 {photo.lens && (
-                  <p class="mt-0.5 text-[0.7rem] tracking-wide text-neutral-600">{photo.lens}</p>
+                  <p class="mt-0.5 text-[0.7rem] tracking-wide text-neutral-500">{photo.lens}</p>
                 )}
               </div>
             )}

@@ -18,6 +18,7 @@ interface Album {
   title: string;
   slug: { current: string };
   description?: any[];
+  cover?: string | null;
   photos: Photo[];
 }
 
@@ -39,6 +40,7 @@ const album: Album = await sanityClient.fetch(
     title,
     slug,
     description,
+    "cover": coalesce(coverImage, photos[0].filename),
     "photos": coalesce(photos[]{ filename, title, camera, lens, exif }, [])
   }`,
   { slug }
@@ -47,9 +49,17 @@ const album: Album = await sanityClient.fetch(
 if (!album) {
   return Astro.redirect('/404');
 }
+
+// 給 <head> 用的純文字描述與分享圖
+const plainDesc = (album.description ?? [])
+  .map((b: any) => (b.children ?? []).map((c: any) => c.text).join(''))
+  .join(' ')
+  .trim();
+const metaDescription = (plainDesc || `${album.title} · ${album.photos.length} 張照片`).slice(0, 160);
+const ogImage = album.cover ? imgUrl(album.cover, 1200) : undefined;
 ---
 
-<Layout title={`${album.title} — cloud.filmz`}>
+<Layout title={`${album.title} — cloud.filmz`} description={metaDescription} image={ogImage} type="article">
   <main class="min-h-dvh pb-20">
     <header class="border-b border-neutral-800 px-6 py-10">
       <a href="/" class="mb-6 inline-block text-xs uppercase tracking-widest text-neutral-500 transition hover:text-neutral-300">
@@ -85,7 +95,7 @@ if (!album) {
                 src={imgUrl(photo.filename, 800)}
                 srcset={`${imgUrl(photo.filename, 400)} 400w, ${imgUrl(photo.filename, 800)} 800w, ${imgUrl(photo.filename, 1200)} 1200w`}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                alt={photo.title ?? ''}
+                alt={photo.title || `${album.title} — ${i + 1}`}
                 loading="lazy"
                 decoding="async"
                 class="h-full w-full object-cover contrast-[1.05] saturate-[.92] transition duration-500 motion-safe:group-hover:scale-[1.03]"
@@ -111,7 +121,7 @@ if (!album) {
     {album.photos.length > 0 && (
       <Fragment>
         <script type="application/json" id="lightbox-data" is:inline set:html={JSON.stringify(
-          album.photos.map((p) => ({ filename: p.filename, title: p.title ?? '', exif: p.exif ?? '', lens: p.lens ?? '' }))
+          album.photos.map((p, i) => ({ filename: p.filename, title: p.title ?? '', exif: p.exif ?? '', lens: p.lens ?? '', alt: p.title || `${album.title} — ${i + 1}` }))
         ).replace(/<\/script>/gi, '<\\/script>')} />
         <Lightbox />
       </Fragment>

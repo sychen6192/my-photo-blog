@@ -12,11 +12,18 @@
     <div id="lb-counter"
       class="absolute left-[max(1rem,env(safe-area-inset-left))] top-[max(0.85rem,env(safe-area-inset-top))] z-10 select-none text-xs tracking-widest text-white/85 tabular-nums [text-shadow:0_1px_3px_rgba(0,0,0,0.7)]"></div>
     <button id="lb-close" type="button" aria-label="關閉"
-      class="absolute right-[max(0.75rem,env(safe-area-inset-right))] top-[max(0.75rem,env(safe-area-inset-top))] z-10 grid h-12 w-12 select-none place-items-center rounded-full bg-black/30 text-2xl text-white ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-black/50 sm:right-[max(1rem,env(safe-area-inset-right))] sm:top-[max(1rem,env(safe-area-inset-top))]">✕</button>
+      class="absolute right-[max(0.75rem,env(safe-area-inset-right))] top-[max(0.75rem,env(safe-area-inset-top))] z-10 grid h-11 w-11 select-none place-items-center rounded-full bg-black/40 text-white backdrop-blur-md transition hover:bg-black/60 sm:right-[max(1rem,env(safe-area-inset-right))] sm:top-[max(1rem,env(safe-area-inset-top))]">
+      <svg viewBox="0 0 24 24" class="pointer-events-none h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+    <!-- 左右箭頭只在桌機顯示;手機改用滑動切換,避免箭頭擋到照片 -->
     <button id="lb-prev" type="button" aria-label="上一張"
-      class="absolute left-[max(0.5rem,env(safe-area-inset-left))] top-1/2 z-10 grid h-12 w-12 -translate-y-1/2 select-none place-items-center rounded-full bg-black/30 text-3xl text-white ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-black/50 sm:left-6">‹</button>
+      class="absolute left-[max(0.5rem,env(safe-area-inset-left))] top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 select-none place-items-center rounded-full bg-black/40 text-white backdrop-blur-md transition hover:bg-black/60 sm:left-6 sm:grid">
+      <svg viewBox="0 0 24 24" class="pointer-events-none h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6" /></svg>
+    </button>
     <button id="lb-next" type="button" aria-label="下一張"
-      class="absolute right-[max(0.5rem,env(safe-area-inset-right))] top-1/2 z-10 grid h-12 w-12 -translate-y-1/2 select-none place-items-center rounded-full bg-black/30 text-3xl text-white ring-1 ring-white/15 backdrop-blur-sm transition hover:bg-black/50 sm:right-6">›</button>
+      class="absolute right-[max(0.5rem,env(safe-area-inset-right))] top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 select-none place-items-center rounded-full bg-black/40 text-white backdrop-blur-md transition hover:bg-black/60 sm:right-6 sm:grid">
+      <svg viewBox="0 0 24 24" class="pointer-events-none h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+    </button>
     <div id="lb-loading" class="pointer-events-none absolute inset-0 z-0 hidden">
       <div class="grid h-full w-full place-items-center">
         <div class="h-9 w-9 animate-spin rounded-full border-2 border-white/25 border-t-white/90"></div>

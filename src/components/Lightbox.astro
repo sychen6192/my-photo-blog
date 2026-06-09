@@ -136,9 +136,12 @@
       }
     };
 
+    let renderToken = 0; // 每次切換 +1;只有最新一次的圖解碼完才顯示,避免快速連點時舊圖蓋掉新圖
+
     const render = () => {
       const p = photos[current];
       if (!p) return;
+      const token = ++renderToken;
       imgEl.style.transition = '';
       resetZoom(); // 換照片時回到未放大狀態
       imgEl.style.opacity = '0'; // 立刻藏住舊圖,換圖時才不會先閃到上一張
@@ -148,11 +151,15 @@
       exifEl.textContent = [p.exif, p.lens].filter(Boolean).join('  ·  ');
       counterEl.textContent = photos.length > 1 ? `${current + 1} / ${photos.length}` : '';
       imgEl.src = imgUrl(p.filename, 1600);
-      if (imgEl.complete && imgEl.naturalWidth > 0) showImg(); // 已在快取就直接顯示,不閃 spinner
+      // 關鍵:img.complete / load 只代表「檔案下載完」,不代表「新圖已解碼、能畫到畫面上」。
+      // 在這個空檔 <img> 仍會顯示上一張的畫面(尤其是已預載的鄰圖),於是會先閃到舊圖。
+      // 改用 decode():等新圖解碼完成、可無閃爍繪製後才顯示;已快取的圖幾乎瞬間完成。
+      // 不支援 decode() 的舊瀏覽器退回 onload / onerror。
+      const reveal = () => { if (token === renderToken) showImg(); };
+      if (typeof imgEl.decode === 'function') imgEl.decode().then(reveal, reveal);
+      else { imgEl.onload = reveal; imgEl.onerror = reveal; }
       preloadNeighbors();
     };
-    imgEl.addEventListener('load', showImg);
-    imgEl.addEventListener('error', showImg);
     const open = (i: number) => {
       current = wrapIndex(i, photos.length);
       render();
